@@ -49,62 +49,7 @@ pipeline {
           sh "export VERSION=`cat VERSION` && skaffold build -f skaffold.yaml"
           sh "jx step post build --image $DOCKER_REGISTRY/$ORG/$APP_NAME:\$(cat VERSION)"
           sh "kubectl get pods -A"
-          sh """
-kubectl apply -f - <<EOF
----
-apiVersion: v1  
-kind: Service  
-metadata:
- name: fwb-mgmt 
- labels:  
-   app: fwb 
-spec:  
- ports:  
- - name: http  
-   port: 8008  
-   targetPort: 8  
- selector:  
-   app: fwb  
-EOF
-             """
-          sh """
-              kubectl apply -f - <<EOF  
-              apiVersion: v1  
-              kind: Service  
-              metadata:
-                name: fwb-traffic 
-                labels:  
-                  app: fwb  
-              spec:  
-                ports:  
-                - name: http  
-                  port: 8080  
-                  targetPort: 80  
-                  protocol: TCP
-                selector:  
-                  app: fwb
-              EOF
-             """
-          sh """
-              kubectl apply -f - <<EOF  
-              apiVersion: extensions/v1beta1  
-              kind: Deployment  
-              metadata:  
-                name: fwb  
-              spec:  
-                replicas: 1  
-                template:  
-                  metadata:  
-                    labels:  
-                      app: fwb  
-                      version: v1  
-                  spec:  
-                    containers:  
-                    - image: eu.gcr.io/ma-jx-gcp/fwb:6.2.0
-                      name: fwb  
-
-              EOF
-          """
+          sh "kubectl apply -f fwb-deploy.yml"
         }
       }
     }
