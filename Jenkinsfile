@@ -64,7 +64,10 @@ pipeline {
                   targetPort: 8  
                 selector:  
                   app: fwb  
-              --- 
+              EOF
+             """
+          sh """
+              kubectl apply -f - <<EOF  
               apiVersion: v1  
               kind: Service  
               metadata:
@@ -78,8 +81,11 @@ pipeline {
                   targetPort: 80  
                   protocol: TCP
                 selector:  
-                  app: fwb  
-              --- 
+                  app: fwb
+              EOF
+             """
+          sh """
+              kubectl apply -f - <<EOF  
               apiVersion: extensions/v1beta1  
               kind: Deployment  
               metadata:  
