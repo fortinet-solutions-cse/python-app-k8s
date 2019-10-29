@@ -50,21 +50,22 @@ pipeline {
           sh "jx step post build --image $DOCKER_REGISTRY/$ORG/$APP_NAME:\$(cat VERSION)"
           sh "kubectl get pods -A"
           sh """
-             kubectl apply -f - <<EOF  
-             apiVersion: v1  
-             kind: Service  
-             metadata:
-               name: fwb-mgmt 
-               labels:  
-                 app: fwb 
-             spec:  
-               ports:  
-               - name: http  
-                 port: 8008  
-                 targetPort: 8  
-               selector:  
-                 app: fwb  
-             EOF
+kubectl apply -f - <<EOF
+---
+apiVersion: v1  
+kind: Service  
+metadata:
+ name: fwb-mgmt 
+ labels:  
+   app: fwb 
+spec:  
+ ports:  
+ - name: http  
+   port: 8008  
+   targetPort: 8  
+ selector:  
+   app: fwb  
+EOF
              """
           sh """
               kubectl apply -f - <<EOF  
